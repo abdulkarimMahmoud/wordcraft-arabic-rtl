@@ -1,0 +1,436 @@
+From f789601447c7f3d3d35fff224a7ccb1cd4956cb5 Mon Sep 17 00:00:00 2001
+From: WordCraft Arabization <arabization@wordcraft.local>
+Date: Thu, 5 Nov 2026 03:43:38 +0000
+Subject: [PATCH] =?UTF-8?q?ar:=20professional=20terminology=20pass=20?=
+ =?UTF-8?q?=E2=80=94=20=D8=A7=D9=84=D8=B5=D9=81=D8=AD=D8=A9=20=D8=A7=D9=84?=
+ =?UTF-8?q?=D8=B1=D8=A6=D9=8A=D8=B3=D9=8A=D8=A9=D8=8C=20=D8=AA=D8=B5=D9=85?=
+ =?UTF-8?q?=D9=8A=D9=85=D8=8C=20=D8=AA=D8=B3=D9=85=D9=8A=D8=A7=D8=AA=20?=
+ =?UTF-8?q?=D9=85=D9=8F=D8=AD=D8=B3=D9=91=D9=86=D8=A9=20+=2010=20=D8=B9?=
+ =?UTF-8?q?=D8=A8=D8=A7=D8=B1=D8=A7=D8=AA=20=D8=AC=D8=AF=D9=8A=D8=AF=D8=A9?=
+ =?UTF-8?q?=20(RTL)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ locales/ar/cadcraft.tsv  |  6 ++--
+ locales/ar/common.tsv    | 20 ++++++------
+ locales/ar/pdfcraft.tsv  |  6 ++--
+ locales/ar/wordcraft.tsv | 68 +++++++++++++++++++++++-----------------
+ 4 files changed, 55 insertions(+), 45 deletions(-)
+
+diff --git a/locales/ar/cadcraft.tsv b/locales/ar/cadcraft.tsv
+index c98b14b..0fbef67 100644
+--- a/locales/ar/cadcraft.tsv
++++ b/locales/ar/cadcraft.tsv
+@@ -387,10 +387,10 @@ menu	Draw	رسم
+ 	Isometric Drafting	صياغة متساوية القياس
+ 	Isometric Plane	المستوى متساوي القياس
+ 	Isometric snap	التقاط متساوي القياس
+-	Italic	Italic
++	Italic	مائل
+ 	Jogged	متعرج
+ 	Jogged Linear	خطي متعرج
+-	Justify	Justify
++	Justify	ضبط
+ 	Keep an editable copy of this table in the drawing	الإبقاء على نسخة قابلة للتحرير من هذا الجدول في الرسم
+ 	Keep the system cursor visible over the drawing area	إبقاء مؤشر النظام مرئياً فوق منطقة الرسم
+ 	Largest array	أكبر مصفوفة
+@@ -965,7 +965,7 @@ menu	Modify	تعديل
+ 	Type a command	اكتب أمراً
+ 	Type text; Enter starts a new paragraph	اكتب النص؛ يبدأ Enter فقرة جديدة
+ 	UCS Icon	أيقونة UCS
+-	Underline	Underline
++	Underline	تسطير
+ 	Undo (⌘Z)	تراجع (⌘Z)
+ 	Unisolate Layer	إلغاء عزل الطبقة
+ 	Units Conversion	تحويل الوحدات
+diff --git a/locales/ar/common.tsv b/locales/ar/common.tsv
+index d7da0db..c4ac5df 100644
+--- a/locales/ar/common.tsv
++++ b/locales/ar/common.tsv
+@@ -69,7 +69,7 @@
+ 	Calculate	الحساب
+ 	Cancel	إلغاء
+ 	Category:	الفئة:
+-	Center	وسط
++	Center	توسيط
+ 	Center X	مركز X
+ 	Center Y	مركز Y
+ 	Chamfer	شطف
+@@ -93,7 +93,7 @@
+ 	Combine	دمج
+ 	Command	أمر
+ 	Comment	تعليق
+-	Comments	التعليقات
++	Comments	تعليقات
+ 	Commits	الإيداعات
+ 	Company	الشركة
+ 	Compare	مقارنة
+@@ -148,7 +148,7 @@
+ 	Duplicate…	تكرار…
+ 	Dynamic	ديناميكي
+ 	Edit	تحرير
+-	Editing	التحرير
++	Editing	تحرير
+ 	Edit…	تحرير…
+ 	Elevation	الارتفاع
+ 	Ellipse	شكل بيضاوي
+@@ -183,7 +183,7 @@
+ 	Flip Horizontal	قلب أفقي
+ 	Flip Vertical	قلب عمودي
+ 	Folder	مجلد
+-	Font	الخط
++	Font	خط
+ 	Font size	حجم الخط
+ 	Font Size:	حجم الخط:
+ 	Font:	الخط:
+@@ -213,7 +213,7 @@
+ 	High Resolution	دقة عالية
+ 	High resolution	دقة عالية
+ 	History	سجل الإجراءات
+-	Home	الرئيسية
++	Home	الصفحة الرئيسية
+ 	Horizontal	أفقي
+ 	Horizontal scale	المقياس الأفقي
+ 	Horizontally	أفقيًا
+@@ -240,7 +240,7 @@
+ 	Justify	ضبط
+ 	Keywords	الكلمات المفتاحية
+ 	Label	التسمية
+-	Labels	التسميات
++	Labels	ملصقات
+ 	Landscape	أفقي
+ 	Language	اللغة
+ @id	language.name	العربية
+@@ -321,12 +321,12 @@
+ 	Open link	فتح الرابط
+ 	Open Recent	فتح الملفات الأخيرة
+ 	Open…	فتح…
+-	Options	الخيارات
++	Options	خيارات
+ 	Options…	خيارات…
+ 	Orange	برتقالي
+ 	Orientation:	الاتجاه:
+ 	Original	الأصل
+-	Outline	مخطط
++	Outline	مخطط تفصيلي
+ 	Output	الناتج
+ 	Oval	شكل بيضاوي
+ 	Overlap:	التداخل:
+@@ -434,7 +434,7 @@
+ 	Status	الحالة
+ 	Status Bar	شريط الحالة
+ 	Stretch	تمديد
+-	Strikethrough	شطب
++	Strikethrough	يتوسطه خط
+ 	Style	النمط
+ 	Subject	الموضوع
+ 	Subset	مجموعة جزئية
+@@ -496,7 +496,7 @@
+ 	Yes	نعم
+ 	yesterday	أمس
+ 	Your changes will be lost if you don't save them.	ستفقد تغييراتك إن لم تحفظها.
+-	Zoom	التكبير
++	Zoom	تكبير/تصغير
+ 	Zoom In	تكبير
+ 	Zoom in	تكبير
+ 	Zoom Out	تصغير
+diff --git a/locales/ar/pdfcraft.tsv b/locales/ar/pdfcraft.tsv
+index 71eb856..3c87dba 100644
+--- a/locales/ar/pdfcraft.tsv
++++ b/locales/ar/pdfcraft.tsv
+@@ -1582,7 +1582,7 @@ certificate	Key usage	استخدام المفتاح
+ 	Layer options	خيارات الطبقات
+ 	Layers panel	لوحة الطبقات
+ 	Layers Panel and Page	لوحة الطبقات والصفحة
+-	Layout	التخطيط
++	Layout	تخطيط
+ 	Layout and Magnification	التخطيط والتكبير
+ 	Lbl and LBody	Lbl و LBody
+ 	Lbl and LBody must be children of LI	Lbl و LBody يجب أن يكونا ابنين لـ LI
+@@ -3030,7 +3030,7 @@ calendar weekday	Su	أحد
+ certificate	Subject	صاحب الشهادة
+ 	Submit a form	إرسال نموذج
+ 	Submit a form with GET	إرسال نموذج (GET)
+-	Subscript	نص منخفض
++	Subscript	منخفض
+ 	Success	نجاح
+ 	Suggest edits	اقتراح تعديلات
+ 	Suggestions	اقتراحات
+@@ -3039,7 +3039,7 @@ certificate	Subject	صاحب الشهادة
+ 	Summarize comments	تلخيص التعليقات
+ 	Summarize Options	خيارات التلخيص
+ 	Summarize with AI	التلخيص بالذكاء الاصطناعي
+-	Superscript	نص مرتفع
++	Superscript	مرتفع
+ 	Swap width and height	تبديل العرض والارتفاع
+ 	Switch light / dark theme	التبديل بين السمة الفاتحة والداكنة
+ 	Switch page theme	تبديل سمة الصفحة
+diff --git a/locales/ar/wordcraft.tsv b/locales/ar/wordcraft.tsv
+index f7332c9..8741db2 100644
+--- a/locales/ar/wordcraft.tsv
++++ b/locales/ar/wordcraft.tsv
+@@ -132,8 +132,8 @@
+ 	Align Center	توسيط
+ 	Align Center Left	محاذاة للوسط يسارًا
+ 	Align Center Right	محاذاة للوسط يمينًا
+-	Align Left	محاذاة لليسار
+-	Align Right	محاذاة لليمين
++	Align Left	محاذاة إلى اليسار
++	Align Right	محاذاة إلى اليمين
+ 	Align Top Center	محاذاة للأعلى في الوسط
+ 	Align Top Left	محاذاة للأعلى يسارًا
+ 	Align Top Right	محاذاة للأعلى يمينًا
+@@ -293,7 +293,7 @@
+ 	Border lines	خطوط الحدود
+ 	Border Painter	رسام الحدود
+ 	Border\nPainter	رسام\nالحدود
+-	Borders	الحدود
++	Borders	حدود
+ 	Borders and Shading	الحدود والتظليل
+ 	Borders and Shading…	الحدود والتظليل…
+ 	Both Sides	الجانبان
+@@ -341,7 +341,7 @@
+ 	Caption Numbering	ترقيم التسميات التوضيحية
+ 	Caption text	نص التسمية التوضيحية
+ 	Caption:	التسمية التوضيحية:
+-	Captions	التسميات التوضيحية
++	Captions	تسميات توضيحية
+ 	Careful, any further back and we'll undo the invention of paper.	انتبه، خطوة أخرى إلى الوراء ونتراجع عن اختراع الورق.
+ 	Caret Character	حرف ^
+ 	Case changes	تغييرات حالة الأحرف
+@@ -436,7 +436,7 @@
+ 	Circled Plus	علامة زائد داخل دائرة
+ 	Circled Times	علامة ضرب داخل دائرة
+ 	Citation Style	نمط الاستشهاد
+-	Citations	الاستشهادات
++	Citations	استشهادات
+ 	Citations & Bibliography	الاستشهادات والمراجع
+ 	City	المدينة
+ 	Clear All Formatting	مسح كل التنسيق
+@@ -571,7 +571,7 @@ numerals	Context	حسب السياق
+ 	Croatian	الكرواتية
+ 	Crop	اقتصاص
+ 	Crop on the page works on unturned pictures: set Rotation to 0° first, or use the crop boxes	يعمل القص على الصفحة مع الصور غير المدوَّرة: اضبط التدوير على 0° أولًا، أو استخدم مربعات القص
+-	Cross-reference	إحالة مرجعية
++	Cross-reference	إشارة مرجعية
+ 	Cross-reference:	إحالة مرجعية:
+ 	Cube Root	جذر تكعيبي
+ 	Current	الحالي
+@@ -653,11 +653,11 @@ numerals	Context	حسب السياق
+ 	Descending	تنازلي
+ 	Describe what this object shows, for people who can't see it.	صف ما يعرضه هذا الكائن، لمن لا يستطيع رؤيته.
+ 	Describe what this table shows, for people who can't see it.	صف ما يعرضه هذا الجدول، لمن لا يستطيع رؤيته.
+-	Design	التصميم
++	Design	تصميم
+ 	Design Mode	وضع التصميم
+ 	Detach Template	فصل القالب
+ 	Detect language automatically	اكتشاف اللغة تلقائيًا
+-	Developer	المطوّر
++	Developer	المطور
+ 	development build	نسخة تطوير
+ 	Diagonal	قطري
+ 	Diagonal Dots	نقاط قطرية
+@@ -686,7 +686,7 @@ numerals	Context	حسب السياق
+ 	Distribute letters	توزيع الأحرف
+ 	Distribute Rows	توزيع الصفوف
+ 	Distribute spacing	توزيع التباعد
+-	Distributed	موزّع
++	Distributed	موزع
+ 	Do Not Check Spelling or Grammar	عدم تدقيق الإملاء أو القواعد
+ 	Do not check spelling or grammar	عدم تدقيق الإملاء أو القواعد
+ 	DO NOT COPY	DO NOT COPY
+@@ -802,7 +802,7 @@ numerals	Context	حسب السياق
+ 	End of Word	نهاية الكلمة
+ 	Endnote Reference	مرجع حاشية ختامية
+ 	Endnote Text	نص حاشية ختامية
+-	Endnotes	الحواشي الختامية
++	Endnotes	حواشٍ ختامية
+ 	Endnotes to footnotes	الحواشي الختامية إلى حواشٍ سفلية
+ 	English (Australia)	الإنجليزية (أستراليا)
+ 	English (Canada)	الإنجليزية (كندا)
+@@ -828,7 +828,7 @@ numerals	Context	حسب السياق
+ 	Envelope DL   4.33" × 8.66"	ظرف DL   4.33" × 8.66"
+ 	Envelope Return	عنوان المرسل على الظرف
+ 	Envelope size:	حجم الظرف:
+-	Envelopes	الأظرف
++	Envelopes	مغلفات
+ 	Equal by Definition	يساوي بالتعريف
+ 	Equal column width	عرض أعمدة متساوٍ
+ 	Equal Equal	يساوي يساوي
+@@ -924,11 +924,11 @@ numerals	Context	حسب السياق
+ 	Font Size	حجم الخط
+ 	Font: {font}	الخط: {font}
+ 	Font…	الخط…
+-	Footer	التذييل
++	Footer	تذييل الصفحة
+ 	Footnote and Endnote	الحاشية السفلية والحاشية الختامية
+ 	Footnote Reference	مرجع حاشية سفلية
+ 	Footnote Text	نص حاشية سفلية
+-	Footnotes	الحواشي السفلية
++	Footnotes	حواشٍ سفلية
+ 	Footnotes and endnotes	الحواشي السفلية والختامية
+ 	Footnotes to endnotes	الحواشي السفلية إلى حواشٍ ختامية
+ 	For which item:	لأي عنصر:
+@@ -1013,7 +1013,7 @@ numerals	Context	حسب السياق
+ 	Hanging Indent	مسافة بادئة معلّقة
+ 	Harvard (Anglia)	Harvard (Anglia)
+ 	Hat	قبعة
+-	Header	الرأس
++	Header	رأس الصفحة
+ 	Header & Footer	الرأس والتذييل
+ 	Header Row	صف الرأس
+ 	Header row	صف الرأس
+@@ -1074,7 +1074,7 @@ numerals	Context	حسب السياق
+ 	I, II, III, …	I، II، III، …
+ 	i, ii, iii, …	i، ii، iii، …
+ 	Icon Color	لون الأيقونة
+-	Icons	الأيقونات
++	Icons	أيقونات
+ 	Identity Matrices	مصفوفات الوحدة
+ 	IEEE	IEEE
+ 	If…Then…Else	إذا…إذن…وإلا
+@@ -1370,7 +1370,7 @@ template	Letter	رسالة
+ 	Made from the author and year when empty	يُنشأ من المؤلف والسنة عندما يكون فارغًا
+ 	Magazine or newspaper article	مقال في مجلة أو صحيفة
+ 	Mail Merge	دمج المراسلات
+-	Mailings	المراسلات
++	Mailings	مراسلات
+ 	Main entry:	الإدخال الرئيسي:
+ 	Make WordCraft the default for Word documents…	جعل WordCraft التطبيق الافتراضي لمستندات Word…
+ 	Makes the ribbon, menus and dialogs larger or smaller. Auto follows your system's display scaling; 100% is one screen pixel per point. Document zoom is separate.	يكبّر الشريط والقوائم ونوافذ الحوار أو يصغّرها. الوضع التلقائي يتبع تحجيم شاشة نظامك؛ و100% تعني بكسل شاشة واحدًا لكل نقطة. تكبير المستند منفصل.
+@@ -1587,7 +1587,7 @@ template	Letter	رسالة
+ 	Number only, without the label's words	الرقم فقط، دون كلمات الملصق
+ 	Number style for this level:	نمط الترقيم لهذا المستوى:
+ 	Number the equation; the number sits at the right margin (or type # then the number)	رقّم المعادلة؛ يظهر الرقم عند الهامش الأيمن (أو اكتب # ثم الرقم)
+-	Numbering	الترقيم
++	Numbering	تعداد رقمي
+ 	Numbering:	الترقيم:
+ 	Numbering…	الترقيم…
+ 	Numerals	الأرقام
+@@ -1831,7 +1831,7 @@ spacing	Open	متباعد
+ 	Put the default commands back on the Quick Access Toolbar?	هل تريد إعادة الأوامر الافتراضية إلى شريط أدوات الوصول السريع؟
+ 	Quadratic Root	جذر المعادلة التربيعية
+ 	Quick Access Toolbar	شريط أدوات الوصول السريع
+-	Quick Parts	الأجزاء السريعة
++	Quick Parts	أجزاء سريعة
+ 	Quick Tables	الجداول السريعة
+ 	Quote	اقتباس
+ 	Radial	شعاعي
+@@ -1872,7 +1872,7 @@ spacing	Open	متباعد
+ 	Red:	الأحمر:
+ 	Reduce Hanging Indent	تقليل المسافة البادئة المعلّقة
+ 	Reference type:	نوع المرجع:
+-	References	المراجع
++	References	مراجع
+ 	Reflection	انعكاس
+ 	Refresh printers	تحديث الطابعات
+ 	Region:	المنطقة:
+@@ -1996,7 +1996,7 @@ spacing	Open	متباعد
+ 	Row:	الصف:
+ 	Rows & Columns	الصفوف والأعمدة
+ 	Ruby text:	نص التوضيح الصوتي:
+-	Ruler	المسطرة
++	Ruler	مسطرة
+ 	Rules	القواعد
+ 	Run-in	متصل
+ 	Russian	الروسية
+@@ -2109,7 +2109,7 @@ spacing	Open	متباعد
+ 	Set Proofing Language…	تعيين لغة التدقيق…
+ 	Setting:	الإعداد:
+ 	Settings…	الإعدادات…
+-	Shading	التظليل
++	Shading	تظليل
+ 	Shadow	الظل
+ 	Shadow, glow and soft edges	الظل والتوهج والحواف الناعمة
+ 	Shape Effects	تأثيرات الشكل
+@@ -2117,7 +2117,7 @@ spacing	Open	متباعد
+ 	Shape Format	تنسيق الشكل
+ 	Shape Outline	حد الشكل الخارجي
+ 	Shape Styles	أنماط الأشكال
+-	Shapes	الأشكال
++	Shapes	أشكال
+ 	Shift+Tab	Shift+Tab
+ 	Shipping labels	ملصقات الشحن
+ 	Shortcut key:	مفتاح الاختصار:
+@@ -2256,7 +2256,7 @@ spacing	Open	متباعد
+ 	Speech	الكلام
+ 	Speed	السرعة
+ 	Spelling	الإملاء
+-	Spelling & Grammar	الإملاء والقواعد
++	Spelling & Grammar	تدقيق إملائي ونحوي
+ 	Spelling &\nGrammar	الإملاء\nوالقواعد
+ 	Spelling and grammar are checked in {language}.	يُدقَّق الإملاء والقواعد بلغة {language}.
+ 	Spelling Suggestions	اقتراحات الإملاء
+@@ -2312,7 +2312,7 @@ spacing	Open	متباعد
+ 	Subentry:	إدخال فرعي:
+ 	Submit print job	إرسال مهمة الطباعة
+ 	Submitting print job…	جارٍ إرسال مهمة الطباعة…
+-	Subscript	نص منخفض
++	Subscript	منخفض
+ 	Subscript-Superscript	دليل سفلي وعلوي
+ 	Subscripts and Superscripts	الأدلة السفلية والعلوية
+ 	Subset:	المجموعة الفرعية:
+@@ -2331,7 +2331,7 @@ spacing	Open	متباعد
+ 	Summation with Subscript Limit	مجموع بحد كدليل سفلي
+ 	Summation with Subscript-Superscript Limits	مجموع بحدود سفلية وعلوية
+ 	Summations	المجاميع
+-	Superscript	نص مرتفع
++	Superscript	مرتفع
+ 	Suppress line numbers	إخفاء أرقام الأسطر
+ 	Surface Integral	تكامل سطحي
+ 	Surface Integral with Limits	تكامل سطحي بحدود
+@@ -2362,7 +2362,7 @@ numerals	System	حسب النظام
+ 	Table of Contents	جدول المحتويات
+ 	Table of Contents Options	خيارات جدول المحتويات
+ 	Table of Contents Styles	أنماط جدول المحتويات
+-	Table of Figures	جدول الأشكال التوضيحية
++	Table of Figures	جدول الأشكال
+ 	Table of\nContents	جدول\nالمحتويات
+ 	Table Properties	خصائص الجدول
+ 	Table Properties…	خصائص الجدول…
+@@ -2500,7 +2500,7 @@ preview	Title	العنوان
+ 	Top Right Cell	الخلية العلوية اليمنى
+ 	Top:	الأعلى:
+ 	Total Row	صف الإجمالي
+-	Track Changes	تتبع التغييرات
++	Track Changes	تعقب التغييرات
+ 	Track Changes Options	خيارات تتبع التغييرات
+ 	Track Changes: On	تتبع التغييرات: مُشغَّل
+ 	Track formatting	تتبع التنسيق
+@@ -2627,7 +2627,7 @@ preview	Title	العنوان
+ 	Washout	باهت
+ 	Wave	موجة
+ 	Weather	الطقس
+-	Web Layout	تخطيط ويب
++	Web Layout	تخطيط الويب
+ 	Web page (*.html)	صفحة ويب (*.html)
+ 	Web\nLayout	تخطيط\nويب
+ 	Website	الموقع الإلكتروني
+@@ -2659,7 +2659,7 @@ preview	Title	العنوان
+ 	Word Right	كلمة لليمين
+ 	Word sources	مصادر Word
+ 	Word XML Document (*.xml)	مستند Word XML (*.xml)
+-	WordArt	WordArt
++	WordArt	نص مزخرف
+ 	WordArt Styles	أنماط WordArt
+ 	WordCraft	WordCraft
+ 	WordCraft is now the default app for Word documents.	أصبح WordCraft التطبيق الافتراضي لمستندات Word.
+@@ -2847,3 +2847,13 @@ preview	Title	العنوان
+ 	Uruguay	أوروغواي
+ 	Venezuela	فنزويلا
+ 	South Africa	جنوب أفريقيا
++	Clear Formatting	مسح التنسيق
++	Right to Left	من اليمين إلى اليسار
++	Left to Right	من اليسار إلى اليمين
++	File › Home	ملف › الصفحة الرئيسية
++	Home › Font	الصفحة الرئيسية › خط
++	Home › Paragraph	الصفحة الرئيسية › فقرة
++	Insert › Table	إدراج › جدول
++	Layout › Page Setup	تخطيط › إعداد الصفحة
++	Review › Proofing	مراجعة › تدقيق
++	View › Zoom	عرض › تكبير/تصغير
+-- 
+2.47.3
+

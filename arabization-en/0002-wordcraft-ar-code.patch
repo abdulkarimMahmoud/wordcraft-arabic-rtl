@@ -1,0 +1,110 @@
+From fc5e3fee2264602863c986507d1008c5fe603348 Mon Sep 17 00:00:00 2001
+From: WordCraft Arabization <arabization@wordcraft.local>
+Date: Thu, 5 Nov 2026 13:19:38 +0000
+Subject: [PATCH] =?UTF-8?q?ar:=20RTL=20=D8=A7=D8=AD=D8=AA=D8=B1=D8=A7?=
+ =?UTF-8?q?=D9=81=D9=8A=20=E2=80=94=20=D8=A7=D9=84=D9=85=D8=B3=D8=AA=D9=86?=
+ =?UTF-8?q?=D8=AF=20=D8=A7=D9=84=D8=AC=D8=AF=D9=8A=D8=AF=20ar-SA=20=D8=A7?=
+ =?UTF-8?q?=D9=81=D8=AA=D8=B1=D8=A7=D8=B6=D9=8A=D8=8C=20=D8=AE=D8=B7=D9=88?=
+ =?UTF-8?q?=D8=B7=20=D8=B9=D8=B1=D8=A8=D9=8A=D8=A9=20=D9=85=D9=88=D8=B3?=
+ =?UTF-8?q?=D8=B9=D8=A9=D8=8C=20=D8=AA=D8=AD=D8=AF=D9=8A=D8=AB=20craft-i18?=
+ =?UTF-8?q?n.rev=20=D8=A5=D9=84=D9=89=20f789601?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ craft-i18n.rev                  |  2 +-
+ crates/fonts/src/ui_fallback.rs | 42 +++++++++++++++++++++++++++++----
+ crates/ui-egui/src/i18n.rs      |  5 ++--
+ 3 files changed, 41 insertions(+), 8 deletions(-)
+
+diff --git a/craft-i18n.rev b/craft-i18n.rev
+index b2237145..63492ea6 100644
+--- a/craft-i18n.rev
++++ b/craft-i18n.rev
+@@ -1 +1 @@
+-9d6d54d6d9ff603cc41e12e5f6ba51af3554ab66
++f789601447c7f3d3d35fff224a7ccb1cd4956cb5
+\ No newline at end of file
+diff --git a/crates/fonts/src/ui_fallback.rs b/crates/fonts/src/ui_fallback.rs
+index fafe6459..a0beeda3 100644
+--- a/crates/fonts/src/ui_fallback.rs
++++ b/crates/fonts/src/ui_fallback.rs
+@@ -219,21 +219,53 @@ pub fn system_cjk_ui_font_for(hans: bool, korean: bool, needed: &[char]) -> Opti
+ }
+ 
+ /// Arabic font files to look for, relative to a font folder, best first.
++/// Professional Arabic UI needs high-quality Naskh/Noto faces before falling back to generic
++/// fonts. Order: system Arabic faces, then modern open Arabic families (Amiri, Cairo, Tajawal,
++/// Scheherazade), then Noto variants, then generic fallbacks.
+ fn arabic_candidates() -> &'static [&'static str] {
+     if cfg!(windows) {
+-        &["segoeui.ttf", "tahoma.ttf", "arial.ttf"]
++        &[
++            "segoeui.ttf",
++            "tahoma.ttf",
++            "arial.ttf",
++            "Amiri-Regular.ttf",
++            "amiri/Amiri-Regular.ttf",
++            "Cairo-Regular.ttf",
++            "cairo/Cairo-Regular.ttf",
++        ]
+     } else if cfg!(target_os = "macos") {
+-        &["SFArabic.ttf", "GeezaPro.ttc", "Supplemental/GeezaPro.ttc", "Supplemental/Arial Unicode.ttf", "Supplemental/Arial.ttf"]
++        &[
++            "SFArabic.ttf",
++            "GeezaPro.ttc",
++            "Supplemental/GeezaPro.ttc",
++            "Supplemental/Arial Unicode.ttf",
++            "Supplemental/Arial.ttf",
++            "Amiri-Regular.ttf",
++        ]
+     } else {
+         &[
++            // System Noto Naskh/Sans — most accurate for UI
++            "noto/NotoNaskhArabic-Regular.ttf",
++            "truetype/noto/NotoNaskhArabic-Regular.ttf",
++            "google-noto/NotoNaskhArabic-Regular.ttf",
+             "noto/NotoSansArabic-Regular.ttf",
+             "truetype/noto/NotoSansArabic-Regular.ttf",
+             "google-noto/NotoSansArabic-Regular.ttf",
+             "google-noto-sans-arabic-vf-fonts/NotoSansArabic[wght].ttf",
+-            "noto/NotoNaskhArabic-Regular.ttf",
+-            "truetype/noto/NotoNaskhArabic-Regular.ttf",
+-            "google-noto/NotoNaskhArabic-Regular.ttf",
++            // Popular professional open Arabic families (if user installed them)
++            "amiri/Amiri-Regular.ttf",
++            "truetype/amiri/Amiri-Regular.ttf",
++            "Amiri-Regular.ttf",
++            "cairo/Cairo-Regular.ttf",
++            "truetype/cairo/Cairo-Regular.ttf",
++            "Cairo-Regular.ttf",
++            "tajawal/Tajawal-Regular.ttf",
++            "truetype/tajawal/Tajawal-Regular.ttf",
++            "Tajawal-Regular.ttf",
++            "scheherazade/ScheherazadeNew-Regular.ttf",
++            "truetype/scheherazade/ScheherazadeNew-Regular.ttf",
+             "vazirmatn/Vazirmatn-Regular.ttf",
++            // Generic fallbacks last
+             "truetype/dejavu/DejaVuSans.ttf",
+             "dejavu/DejaVuSans.ttf",
+             "TTF/DejaVuSans.ttf",
+diff --git a/crates/ui-egui/src/i18n.rs b/crates/ui-egui/src/i18n.rs
+index 9debb790..3f0d5eb7 100644
+--- a/crates/ui-egui/src/i18n.rs
++++ b/crates/ui-egui/src/i18n.rs
+@@ -125,8 +125,9 @@ pub static LANGUAGES: [LangInfo; 28] = [
+     // Romanian; `ro`, `ro-RO`, `ro_RO.UTF-8` and `ro-MD` resolve here.
+     LangInfo { code: "ro", prefer_hans: false, editing_lang: None },
+     // Arabic (Modern Standard); `ar` and every `ar-*` locale (`ar-MA`, `ar-EG`, `ar-SA` …) resolve
+-    // here. Right to left: see [`RTL_LANGUAGES`] and [`Lang::rtl`].
+-    LangInfo { code: "ar", prefer_hans: false, editing_lang: None },
++    // here. Right to left: see [`RTL_LANGUAGES`] and [`Lang::rtl`]. New blank documents default
++    // to Arabic (Saudi) so typing starts RTL with Arabic proofing when available.
++    LangInfo { code: "ar", prefer_hans: false, editing_lang: Some("ar-SA") },
+     // Slovenian; `sl`, `sl-SI` and `sl_SI.UTF-8` resolve here.
+     LangInfo { code: "sl", prefer_hans: false, editing_lang: None },
+ ];
+-- 
+2.47.3
+

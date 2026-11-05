@@ -125,8 +125,9 @@ pub static LANGUAGES: [LangInfo; 28] = [
     // Romanian; `ro`, `ro-RO`, `ro_RO.UTF-8` and `ro-MD` resolve here.
     LangInfo { code: "ro", prefer_hans: false, editing_lang: None },
     // Arabic (Modern Standard); `ar` and every `ar-*` locale (`ar-MA`, `ar-EG`, `ar-SA` …) resolve
-    // here. Right to left: see [`RTL_LANGUAGES`] and [`Lang::rtl`].
-    LangInfo { code: "ar", prefer_hans: false, editing_lang: None },
+    // here. Right to left: see [`RTL_LANGUAGES`] and [`Lang::rtl`]. New blank documents default
+    // to Arabic (Saudi) so typing starts RTL with Arabic proofing when available.
+    LangInfo { code: "ar", prefer_hans: false, editing_lang: Some("ar-SA") },
     // Slovenian; `sl`, `sl-SI` and `sl_SI.UTF-8` resolve here.
     LangInfo { code: "sl", prefer_hans: false, editing_lang: None },
 ];

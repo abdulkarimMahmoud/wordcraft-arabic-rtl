@@ -1,0 +1,117 @@
+# تصحيحات الترجمة العربية الاحترافية لـ WordCraft
+# التنسيق: السياق <TAB> النص الإنجليزي <TAB> الترجمة المقترحة
+# المصدر: craft-i18n locales/ar/*.tsv — الهدف: مطابقة مصطلحات Word العربية الشائعة مع صياغة احترافية
+# كل سطر كُتب من المعنى العام، لا بنسخ جداول مايكروسوفت (Clean-room)
+# للتطبيق: انسخ كل سطر إلى الملف المناسب (common.tsv أو wordcraft.tsv) واستبدل الترجمة الحالية
+
+	Home	الصفحة الرئيسية
+	Design	تصميم
+	References	مراجع
+	Mailings	مراسلات
+	Review	مراجعة
+	View	عرض
+	File	ملف
+	Insert	إدراج
+	Draw	رسم
+	Layout	تخطيط
+	Help	مساعدة
+	Developer	المطور
+	Font	خط
+	Paragraph	فقرة
+	Styles	الأنماط
+	Clipboard	الحافظة
+	Editing	تحرير
+	Align Left	محاذاة إلى اليسار
+	Align Right	محاذاة إلى اليمين
+	Align Center	توسيط
+	Center	توسيط
+	Justify	ضبط
+	Distributed	موزع
+	Bold	غامق
+	Italic	مائل
+	Underline	تسطير
+	Strikethrough	يتوسطه خط
+	Subscript	منخفض
+	Superscript	مرتفع
+	Highlight	تمييز
+	Font Color	لون الخط
+	Text Effects	تأثيرات النص
+	Clear Formatting	مسح التنسيق
+	Bullets	تعداد نقطي
+	Numbering	تعداد رقمي
+	Multilevel List	قائمة متعددة المستويات
+	Increase Indent	زيادة المسافة البادئة
+	Decrease Indent	إنقاص المسافة البادئة
+	Line Spacing	تباعد الأسطر
+	Shading	تظليل
+	Borders	حدود
+	Show/Hide	إظهار/إخفاء
+	Find	بحث
+	Replace	استبدال
+	Select	تحديد
+	Zoom	تكبير/تصغير
+	Print Layout	تخطيط الطباعة
+	Web Layout	تخطيط الويب
+	Draft	مسودة
+	Outline	مخطط تفصيلي
+	Read Mode	وضع القراءة
+	Navigation Pane	جزء التنقل
+	Ruler	مسطرة
+	Gridlines	خطوط الشبكة
+	Table	جدول
+	Insert Table	إدراج جدول
+	Picture	صورة
+	Shapes	أشكال
+	Icons	أيقونات
+	Chart	مخطط
+	Header	رأس الصفحة
+	Footer	تذييل الصفحة
+	Page Number	رقم الصفحة
+	Text Box	مربع نص
+	Quick Parts	أجزاء سريعة
+	WordArt	نص مزخرف
+	Signature Line	سطر التوقيع
+	Date & Time	التاريخ والوقت
+	Equation	معادلة
+	Symbol	رمز
+	Table of Contents	جدول المحتويات
+	Footnotes	حواشٍ سفلية
+	Endnotes	حواشٍ ختامية
+	Citations	استشهادات
+	Bibliography	قائمة المراجع
+	Captions	تسميات توضيحية
+	Index	فهرس
+	Table of Figures	جدول الأشكال
+	Cross-reference	إشارة مرجعية
+	Mail Merge	دمج المراسلات
+	Envelopes	مغلفات
+	Labels	ملصقات
+	Spelling & Grammar	تدقيق إملائي ونحوي
+	Thesaurus	قاموس المرادفات
+	Word Count	عدد الكلمات
+	Track Changes	تعقب التغييرات
+	Comments	تعليقات
+	Compare	مقارنة
+	Protect	حماية
+	Save	حفظ
+	Save As	حفظ باسم
+	Open	فتح
+	New	جديد
+	Print	طباعة
+	Export	تصدير
+	Close	إغلاق
+	Options	خيارات
+	Language	اللغة
+	Interface language	لغة الواجهة
+	Proofing language	لغة التدقيق
+	Right to Left	من اليمين إلى اليسار
+	Left to Right	من اليسار إلى اليمين
+	Direction	الاتجاه
+# ——— عبارات واجهة ———
+	File › Home	ملف › الصفحة الرئيسية
+	Home › Font	الصفحة الرئيسية › خط
+	Home › Paragraph	الصفحة الرئيسية › فقرة
+	Insert › Table	إدراج › جدول
+	Layout › Page Setup	تخطيط › إعداد الصفحة
+	Review › Proofing	مراجعة › تدقيق
+	View › Zoom	عرض › تكبير/تصغير

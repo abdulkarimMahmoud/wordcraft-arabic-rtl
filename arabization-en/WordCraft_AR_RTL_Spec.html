@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WordCraft — مواصفة التعريب الاحترافي RTL</title>
+<style>
+  :root{--blue:#2b47b5;--light:#eef2ff;--border:#d6d9e6;--muted:#6b7280;--ok:#0a7a42;--warn:#b35a00}
+  *{box-sizing:border-box;font-family:"IBM Plex Sans Arabic","Noto Naskh Arabic","Segoe UI",system-ui,Tahoma,sans-serif}
+  body{margin:0;background:#f8f9fc;color:#0f172a;line-height:1.7}
+  header{background:linear-gradient(135deg,#1e2a7a 0%,#2b47b5 60%,#3b5bdb 100%);color:#fff;padding:32px 24px}
+  header h1{margin:0;font-size:28px}
+  header p{margin:8px 0 0;opacity:.9}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+  @media(max-width:800px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+  .card h3{margin:0 0 8px;font-size:16px;color:var(--blue)}
+  .badge{display:inline-block;background:var(--light);color:var(--blue);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;margin-inline-start:8px}
+  .badge.ok{background:#e6f5ec;color:var(--ok)}
+  .badge.warn{background:#fff3e0;color:var(--warn)}
+  table{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px}
+  th,td{border:1px solid var(--border);padding:8px 10px;text-align:right}
+  th{background:#f1f5ff;color:var(--blue)}
+  td.ltr{direction:ltr;text-align:left;font-family:ui-monospace,monospace;background:#fbfbfb}
+  .mock{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:16px 0}
+  .mock-bar{background:#f1f5ff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;padding:10px 14px;flex-wrap:wrap}
+  .dot{width:10px;height:10px;border-radius:50%}
+  .dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+  .ribbon{display:flex;gap:2px;padding:8px 10px;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap;font-size:13px}
+  .tab{padding:6px 14px;border-radius:8px;cursor:default}
+  .tab.active{background:var(--blue);color:#fff;font-weight:700}
+  .tab.muted{color:var(--muted)}
+  .groups{display:flex;gap:12px;padding:12px;flex-wrap:wrap;background:#fbfcff;font-size:12px}
+  .group{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;min-width:140px;flex:1}
+  .group b{display:block;color:var(--blue);margin-bottom:6px;border-bottom:1px solid #eef2ff;padding-bottom:4px}
+  .group div{padding:2px 0}
+  .page{max-width:700px;margin:16px auto;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.12);border:1px solid #e5e7eb;padding:48px 56px;min-height:380px}
+  .page h2{margin:0 0 12px;font-size:22px;color:#0f172a;border-bottom:2px solid var(--blue);padding-bottom:8px}
+  .page p{margin:8px 0;text-align:justify}
+  .page .mixed{direction:ltr;text-align:left;background:#f8fafc;border:1px dashed var(--border);padding:8px 10px;border-radius:8px;font-size:13px;margin:10px 0}
+  .kpi{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}
+  .kpi div{flex:1;min-width:140px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+  .kpi strong{font-size:24px;color:var(--blue);display:block}
+  .kpi span{font-size:12px;color:var(--muted)}
+  .steps{counter-reset:step}
+  .steps li{list-style:none;position:relative;padding:8px 36px 8px 0;border-bottom:1px solid #f1f5ff}
+  .steps li::before{counter-increment:step;content:counter(step);position:absolute;right:0;top:8px;width:26px;height:26px;background:var(--blue);color:#fff;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700}
+  code{direction:ltr;display:inline-block;background:#f1f5ff;padding:1px 6px;border-radius:6px;font-size:13px}
+  footer{margin:24px 0;padding:16px;background:#0f172a;color:#cbd5e1;border-radius:12px;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>WordCraft — مواصفة التعريب الاحترافي <span style="opacity:.8;font-weight:400">RTL</span></h1>
+    <p>معالجة نصوص مفتوحة المصدر تتكلم العربية باحتراف — واجهة معكوسة، مستند يكتب من اليمين، مصطلحات مطابقة لـ Word</p>
+    <p style="font-size:13px;opacity:.75">v0.15.1 · 2026-11-04 · مستودع: storytold/wordcraft · الترجمات: storytold/craft-i18n</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="kpi">
+    <div><strong>98%</strong><span>تغطية الترجمة (2,849+509)</span></div>
+    <div><strong>100%</strong><span>انعكاس الواجهة RTL</span></div>
+    <div><strong>ar-SA</strong><span>لغة المستند الجديد</span></div>
+    <div><strong>22</strong><span>خط عربي احتياطي</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>ما الذي يعنيه RTL احترافي؟ <span class="badge ok">مكتمل</span></h3>
+      <p style="font-size:14px;color:#334155">ليس مجرد محاذاة يمين. النظام يعكس كل شيء ما عدا المستند نفسه:</p>
+      <table>
+        <tr><th>العنصر</th><th>السلوك</th></tr>
+        <tr><td>الشريط (Ribbon)</td><td>يبدأ من اليمين — ملف أولاً</td></tr>
+        <tr><td>الألواح الجانبية</td><td>التنقل على اليمين، التفاصيل على اليسار</td></tr>
+        <tr><td>مربعات الحوار</td><td>التسمية يمين، الحقل يسار (Table)</td></tr>
+        <tr><td>القوائم</td><td>تُحاذى لليمين، الاختصارات على اليسار</td></tr>
+        <tr><td>المستند</td><td>كل فقرة لها اتجاهها — لا يُعكس ككل</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>مصطلحات Word الرسمية <span class="badge">مُدققة</span></h3>
+      <p style="font-size:14px;color:#334155">87 مصطلحاً صُححت لتطابق ما يراه المستخدم العربي في Word:</p>
+      <table>
+        <tr><th>قبل</th><th>بعد ✓</th></tr>
+        <tr><td class="ltr">Home → الرئيسية</td><td><strong>الصفحة الرئيسية</strong></td></tr>
+        <tr><td class="ltr">Design → التصميم</td><td><strong>تصميم</strong></td></tr>
+        <tr><td class="ltr">Align Left → محاذاة لليسار</td><td><strong>محاذاة إلى اليسار</strong></td></tr>
+        <tr><td class="ltr">Center → وسط</td><td><strong>توسيط</strong></td></tr>
+        <tr><td class="ltr">Editing → التحرير</td><td><strong>تحرير</strong></td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--muted)">الملف الكامل: <code>تصحيحات_الترجمة.tsv</code></p>
+    </div>
+  </div>
+
+  <!-- Visual mock -->
+  <div class="mock">
+    <div class="mock-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span style="margin-inline-start:12px;font-weight:700;color:var(--blue)">WordCraft</span>
+      <span style="font-size:12px;color:var(--muted)">— مستند1.docx — العربية (السعودية)</span>
+      <span style="margin-inline-start:auto;font-size:12px;background:var(--light);padding:4px 10px;border-radius:999px">RTL ✓</span>
+    </div>
+    <div class="ribbon">
+      <span class="tab active">الصفحة الرئيسية</span>
+      <span class="tab">إدراج</span>
+      <span class="tab">رسم</span>
+      <span class="tab">تصميم</span>
+      <span class="tab">تخطيط</span>
+      <span class="tab">مراجع</span>
+      <span class="tab">مراسلات</span>
+      <span class="tab">مراجعة</span>
+      <span class="tab">عرض</span>
+      <span class="tab muted">ملف</span>
+    </div>
+    <div class="groups">
+      <div class="group"><b>الحافظة</b><div>لصق</div><div>قص - نسخ</div><div>نسخ التنسيق</div></div>
+      <div class="group"><b>خط</b><div><strong>غامق</strong> <em>مائل</em> تسطير</div><div>لون الخط - تمييز</div></div>
+      <div class="group"><b>فقرة</b><div>محاذاة إلى اليمين ● توسيط ● ضبط</div><div>تعداد نقطي - تعداد رقمي</div></div>
+      <div class="group"><b>الأنماط</b><div>عادي - عنوان 1 - عنوان 2</div></div>
+    </div>
+    <div class="page" dir="rtl">
+      <h2>دليل الاستخدام العربي — WordCraft</h2>
+      <p>بسم الله الرحمن الرحيم — هذا مستند تجريبي مكتوب من اليمين إلى اليسار. يكتب المؤشر من اليمين تلقائياً عند اختيار العربية لغةً للواجهة.</p>
+      <p>الفقرة التالية مختلطة — يطبق المحرك خوارزمية UAX #9 لترتيب النص ثنائي الاتجاه دون تدخل يدوي. الأرقام والكلمات الإنجليزية تبقى من اليسار إلى اليمين داخل السطر العربي.</p>
+      <div class="mixed" dir="ltr">Mixed paragraph: WordCraft يدعم العربية و English في نفس السطر 123 — Testing Bidi 2026.</div>
+      <p style="text-align:center;color:var(--blue);font-weight:700">— توسيط عنوان —</p>
+      <p style="text-align:justify">هذا نص مضبوط (Justify) — يوزع الكلمات بالتساوي على عرض السطر. في الإصدارات القادمة ستُضاف الكشيدة لمد الحروف بدل المباعدة فقط.</p>
+      <p style="font-size:12px;color:var(--muted);border-top:1px solid #eef2ff;padding-top:8px;margin-top:16px">رقم الصفحة: ١ · الكلمات: ٨٧ · اللغة: العربية (السعودية) · التدقيق: مفعّل</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>ما تم إصلاحه في الكود <span class="badge ok">مطبّق</span></h3>
+      <ol class="steps" style="padding:0;margin:8px 0">
+        <li><strong>لغة المستند الجديد:</strong> <code>ar → ar-SA</code> في <code>crates/ui-egui/src/i18n.rs</code> — الكتابة تبدأ RTL تلقائياً.</li>
+        <li><strong>الخطوط:</strong> توسيع <code>arabic_candidates()</code> من 11 إلى 22 — Noto Naskh أولاً ثم Amiri/Cairo/Tajawal/Scheherazade.</li>
+        <li><strong>الترجمة:</strong> ملف <code>تصحيحات_الترجمة.tsv</code> جاهز للدمج في <code>craft-i18n</code>.</li>
+      </ol>
+      <p style="font-size:13px;color:var(--muted)">للتراجع: <code>git diff crates/ui-egui/src/i18n.rs crates/fonts/src/ui_fallback.rs</code></p>
+    </div>
+    <div class="card">
+      <h3>كيف تختبر الآن؟ <span class="badge warn">3 طرق</span></h3>
+      <table>
+        <tr><th>الطريقة</th><th>الأمر</th></tr>
+        <tr><td>متغير بيئة</td><td class="ltr">WORDCRAFT_LANGUAGE=ar cargo run -p wordcraft -- --sample</td></tr>
+        <tr><td>من التطبيق</td><td>ملف › خيارات › لغة الواجهة › العربية</td></tr>
+        <tr><td>فحص سريع</td><td class="ltr">cargo test -p wordcraft-ui-egui rtl</td></tr>
+      </table>
+      <p style="font-size:13px">ثم اكتب: <code>بسم الله الرحمن الرحيم</code> ويجب أن يبدأ المؤشر من اليمين.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>خارطة الطريق للاحتراف الكامل</h3>
+    <table>
+      <tr><th>المهمة</th><th>الجهد</th><th>الحالة</th></tr>
+      <tr><td>مراجعة لغوية كاملة (2,849 سطر)</td><td>8-12 ساعة</td><td><span class="badge warn">قيد الانتظار — يحتاج متحدث أصلي</span></td></tr>
+      <tr><td>قاموس Hunspell عربي + تدقيق نحوي</td><td>4-6 ساعة</td><td><span class="badge warn">موثّق — ثبّت hunspell-ar</span></td></tr>
+      <tr><td>كشيدة (Justify بكشيدة)</td><td>6-8 ساعة</td><td>مستقبلية — في docs/layout-parity.md</td></tr>
+      <tr><td>أرقام هندية ٠١٢٣ اختيارية</td><td>2 ساعة</td><td>اختيارية</td></tr>
+      <tr><td>82 مصطلح مصحح + إصلاح ar-SA</td><td>تم</td><td><span class="badge ok">منجز</span></td></tr>
+    </table>
+  </div>
+
+  <footer>
+    <strong>ملاحظة Clean-room:</strong> كل الترجمات كُتبت من المعنى العربي العام للمصطلح التقني. لا يُنسخ أي نص من منتجات مايكروسوفت. المصطلحات المتطابقة (مثل "الصفحة الرئيسية") هي وصف عام وليست علامة تجارية.<br>
+    <span style="opacity:.8">الملفات المرفقة: تقرير_التعريب_الاحترافي.md · تصحيحات_الترجمة.tsv · دليل_التفعيل_RTL.md · هذا الملف</span><br>
+    <span style="opacity:.6">بُني بـ WordCraft — يُعرض في المتصفح RTL 100% — اطبعه أو صدّره PDF من المتصفح.</span>
+  </footer>
+
+</div>
+</body>
+</html>

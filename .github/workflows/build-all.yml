@@ -1,0 +1,191 @@
+name: Build Arabic — All Platforms
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Linux (tar + deb) — Ubuntu/Debian
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Clone craft-i18n + apply Arabic patch
+        run: |
+          git clone https://github.com/storytold/craft-i18n /tmp/craft-i18n
+          # Patch via python (robust to upstream moves) using repo's TSV
+          if [ -f arabization-en/04-Translation-Patch.tsv ]; then
+            python3 << 'PYEOF'
+          import pathlib
+          patch_path = pathlib.Path("arabization-en/04-Translation-Patch.tsv")
+          craft_root = pathlib.Path("/tmp/craft-i18n/locales/ar")
+          patch_entries=[]
+          for line in patch_path.read_text(encoding="utf-8").splitlines():
+              if not line.strip() or line.lstrip().startswith("#"): continue
+              parts=line.split("\t")
+              if len(parts)==3: ctx,eng,new=parts
+              elif len(parts)==2: ctx=""; eng,new=parts
+              else: continue
+              ctx=ctx.strip(); eng=eng.strip(); new=new.strip()
+              if eng and new: patch_entries.append((ctx,eng,new))
+          patch_dict={(ctx,eng):new for ctx,eng,new in patch_entries}
+          for fname in ["common.tsv","wordcraft.tsv","pdfcraft.tsv","cadcraft.tsv"]:
+              fpath=craft_root/fname
+              if not fpath.exists(): continue
+              lines=fpath.read_text(encoding="utf-8").splitlines()
+              out=[]; upd=0
+              for line in lines:
+                  if line.startswith("#") or not line.strip(): out.append(line); continue
+                  parts=line.split("\t")
+                  if len(parts)<3: out.append(line); continue
+                  if len(parts)>3: ctx=parts[0]; eng=parts[1]; trans="\t".join(parts[2:])
+                  else: ctx,eng,trans=parts
+                  key=(ctx,eng)
+                  if key in patch_dict:
+                      trans=patch_dict[key]; upd+=1
+                      out.append(f"{ctx}\t{eng}\t{trans}")
+                  else: out.append(line)
+              fpath.write_text("\n".join(out)+"\n", encoding="utf-8")
+              print(f"{fname}: {upd} updated")
+          # missing entries append
+          all_keys=set()
+          for fname in ["common.tsv","wordcraft.tsv","pdfcraft.tsv","cadcraft.tsv"]:
+              fpath=craft_root/fname
+              for line in fpath.read_text(encoding="utf-8").splitlines():
+                  if line.startswith("#") or not line.strip(): continue
+                  parts=line.split("\t")
+                  if len(parts)>=3: all_keys.add((parts[0],parts[1]))
+          missing=[(c,e,n) for c,e,n in patch_entries if (c,e) not in all_keys]
+          if missing:
+              print(f"Missing {len(missing)}, appending to wordcraft.tsv")
+              wpath=craft_root/"wordcraft.tsv"
+              with wpath.open("a",encoding="utf-8") as f:
+                  for c,e,n in missing:
+                      f.write(f"{c}\t{e}\t{n}\n")
+          PYEOF
+          fi
+          cat /tmp/craft-i18n/locales/ar/common.tsv | grep -P "\tHome\t" || true
+          echo "CRAFT_I18N_DIR=/tmp/craft-i18n" >> $GITHUB_ENV
+
+      - name: Install Rust 1.95
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.95.0
+
+      - name: Install nfpm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y golang
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Build Linux tar + deb
+        env:
+          CRAFT_I18N_DIR: /tmp/craft-i18n
+        run: |
+          bash packaging/linux/package.sh --formats "tar deb"
+          ls -lh dist/release/
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-arabic-linux
+          path: |
+            dist/release/*.tar.gz
+            dist/release/*.deb
+          if-no-files-found: error
+
+  build-windows:
+    name: Windows (MSI + Portable)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Clone craft-i18n + apply Arabic patch
+        shell: bash
+        run: |
+          git clone https://github.com/storytold/craft-i18n /tmp/craft-i18n
+          if [ -f arabization-en/04-Translation-Patch.tsv ]; then
+            python << 'PYEOF'
+          import pathlib
+          patch_path = pathlib.Path("arabization-en/04-Translation-Patch.tsv")
+          craft_root = pathlib.Path("/tmp/craft-i18n/locales/ar")
+          patch_entries=[]
+          for line in patch_path.read_text(encoding="utf-8").splitlines():
+              if not line.strip() or line.lstrip().startswith("#"): continue
+              parts=line.split("\t")
+              if len(parts)==3: ctx,eng,new=parts
+              elif len(parts)==2: ctx=""; eng,new=parts
+              else: continue
+              ctx=ctx.strip(); eng=eng.strip(); new=new.strip()
+              if eng and new: patch_entries.append((ctx,eng,new))
+          patch_dict={(ctx,eng):new for ctx,eng,new in patch_entries}
+          for fname in ["common.tsv","wordcraft.tsv","pdfcraft.tsv","cadcraft.tsv"]:
+              fpath=craft_root/fname
+              if not fpath.exists(): continue
+              lines=fpath.read_text(encoding="utf-8").splitlines()
+              out=[]; upd=0
+              for line in lines:
+                  if line.startswith("#") or not line.strip(): out.append(line); continue
+                  parts=line.split("\t")
+                  if len(parts)<3: out.append(line); continue
+                  if len(parts)>3: ctx=parts[0]; eng=parts[1]; trans="\t".join(parts[2:])
+                  else: ctx,eng,trans=parts
+                  key=(ctx,eng)
+                  if key in patch_dict:
+                      trans=patch_dict[key]; upd+=1
+                      out.append(f"{ctx}\t{eng}\t{trans}")
+                  else: out.append(line)
+              fpath.write_text("\n".join(out)+"\n", encoding="utf-8")
+              print(f"{fname}: {upd} updated")
+          PYEOF
+          fi
+          echo "CRAFT_I18N_DIR=/tmp/craft-i18n" >> $GITHUB_ENV
+
+      - name: Install Rust 1.95
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.95.0
+
+      - name: Build Windows MSI + Portable
+        shell: powershell
+        env:
+          CRAFT_I18N_DIR: /tmp/craft-i18n
+        run: |
+          $env:CRAFT_I18N_DIR="C:\temp\craft-i18n"
+          if (Test-Path "/tmp/craft-i18n") { Copy-Item -Recurse -Force "/tmp/craft-i18n" "C:\temp\craft-i18n" }
+          powershell -ExecutionPolicy Bypass -File packaging/windows/package.ps1 -Arch x64
+          dir dist/release
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-arabic-windows
+          path: |
+            dist/release/*.msi
+            dist/release/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: [build-linux, build-windows]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Display artifacts
+        run: ls -R artifacts
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true

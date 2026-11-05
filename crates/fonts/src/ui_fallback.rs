@@ -219,21 +219,53 @@ pub fn system_cjk_ui_font_for(hans: bool, korean: bool, needed: &[char]) -> Opti
 }
 
 /// Arabic font files to look for, relative to a font folder, best first.
+/// Professional Arabic UI needs high-quality Naskh/Noto faces before falling back to generic
+/// fonts. Order: system Arabic faces, then modern open Arabic families (Amiri, Cairo, Tajawal,
+/// Scheherazade), then Noto variants, then generic fallbacks.
 fn arabic_candidates() -> &'static [&'static str] {
     if cfg!(windows) {
-        &["segoeui.ttf", "tahoma.ttf", "arial.ttf"]
+        &[
+            "segoeui.ttf",
+            "tahoma.ttf",
+            "arial.ttf",
+            "Amiri-Regular.ttf",
+            "amiri/Amiri-Regular.ttf",
+            "Cairo-Regular.ttf",
+            "cairo/Cairo-Regular.ttf",
+        ]
     } else if cfg!(target_os = "macos") {
-        &["SFArabic.ttf", "GeezaPro.ttc", "Supplemental/GeezaPro.ttc", "Supplemental/Arial Unicode.ttf", "Supplemental/Arial.ttf"]
+        &[
+            "SFArabic.ttf",
+            "GeezaPro.ttc",
+            "Supplemental/GeezaPro.ttc",
+            "Supplemental/Arial Unicode.ttf",
+            "Supplemental/Arial.ttf",
+            "Amiri-Regular.ttf",
+        ]
     } else {
         &[
+            // System Noto Naskh/Sans — most accurate for UI
+            "noto/NotoNaskhArabic-Regular.ttf",
+            "truetype/noto/NotoNaskhArabic-Regular.ttf",
+            "google-noto/NotoNaskhArabic-Regular.ttf",
             "noto/NotoSansArabic-Regular.ttf",
             "truetype/noto/NotoSansArabic-Regular.ttf",
             "google-noto/NotoSansArabic-Regular.ttf",
             "google-noto-sans-arabic-vf-fonts/NotoSansArabic[wght].ttf",
-            "noto/NotoNaskhArabic-Regular.ttf",
-            "truetype/noto/NotoNaskhArabic-Regular.ttf",
-            "google-noto/NotoNaskhArabic-Regular.ttf",
+            // Popular professional open Arabic families (if user installed them)
+            "amiri/Amiri-Regular.ttf",
+            "truetype/amiri/Amiri-Regular.ttf",
+            "Amiri-Regular.ttf",
+            "cairo/Cairo-Regular.ttf",
+            "truetype/cairo/Cairo-Regular.ttf",
+            "Cairo-Regular.ttf",
+            "tajawal/Tajawal-Regular.ttf",
+            "truetype/tajawal/Tajawal-Regular.ttf",
+            "Tajawal-Regular.ttf",
+            "scheherazade/ScheherazadeNew-Regular.ttf",
+            "truetype/scheherazade/ScheherazadeNew-Regular.ttf",
             "vazirmatn/Vazirmatn-Regular.ttf",
+            // Generic fallbacks last
             "truetype/dejavu/DejaVuSans.ttf",
             "dejavu/DejaVuSans.ttf",
             "TTF/DejaVuSans.ttf",
