@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Download the MSI from the build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: wordcraft-arabic-windows
           path: installer
@@ -78,7 +78,7 @@ jobs:
 
       - name: Preserve installation logs on failure
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wordcraft-msi-test-logs
           path: ${{ runner.temp }}/wordcraft-msi-*.log

@@ -12,7 +12,7 @@ jobs:
     # Use glibc 2.35 so the DEB also runs on Debian 12 and Ubuntu 22.04.
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Clone the pinned language data and apply Arabic patch
@@ -51,7 +51,7 @@ jobs:
           ls -lh dist/release/
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wordcraft-arabic-linux
           path: |
@@ -63,7 +63,7 @@ jobs:
     name: Windows (MSI + Portable)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Clone craft-i18n + apply Arabic patch
@@ -160,7 +160,7 @@ jobs:
           PYEOF
 
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wordcraft-arabic-windows
           path: |
@@ -176,7 +176,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
       - name: Display artifacts
