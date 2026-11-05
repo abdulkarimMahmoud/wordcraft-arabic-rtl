@@ -162,6 +162,12 @@ jobs:
           wix extension list
           echo "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Append
 
+      - name: Patch wxs for WiX 4.0.5 (fix WIX0005 Files)
+        shell: powershell
+        run: |
+          (Get-Content packaging/windows/wordcraft.wxs) -replace '<Files Include="\$\(var.AppNoticesDir\)\\\*\*" />', '<Component Id="AppNoticesFiles" Guid="11111111-1111-1111-1111-111111111111"><File Source="$(var.AppNoticesDir)\README.txt" KeyPath="yes" /></Component>' -replace '<Files Include="\$\(var.DocsDir\)\\\*\*" />', '<Component Id="DocsFiles" Guid="22222222-2222-2222-2222-222222222222"><File Source="$(var.DocsDir)\LICENSE.txt" KeyPath="yes" /></Component>' | Set-Content packaging/windows/wordcraft.wxs
+          Get-Content packaging/windows/wordcraft.wxs | Select-String -Pattern "Files|Component" | Write-Host
+
       - name: Build Windows MSI + Portable
         shell: powershell
         env:
