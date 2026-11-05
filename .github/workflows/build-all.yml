@@ -68,8 +68,8 @@ jobs:
                       f.write(f"{c}\t{e}\t{n}\n")
           PYEOF
           fi
-          cat /tmp/craft-i18n/locales/ar/common.tsv | grep -P "\tHome\t" || true
-          echo "CRAFT_I18N_DIR=/tmp/craft-i18n" >> $GITHUB_ENV
+          grep -P "\tHome\t" /tmp/craft-i18n/locales/ar/common.tsv || true
+          echo "CRAFT_I18N_DIR=/tmp/craft-i18n" >> "$GITHUB_ENV"
 
       - name: Install Rust 1.95
         uses: dtolnay/rust-toolchain@master
@@ -81,7 +81,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y golang
           go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
+          echo "$HOME/go/bin" >> "$GITHUB_PATH"
 
       - name: Build Linux tar + deb
         env:
@@ -109,7 +109,10 @@ jobs:
       - name: Clone craft-i18n + apply Arabic patch
         shell: bash
         run: |
-          git clone https://github.com/storytold/craft-i18n "C:/temp/craft-i18n" 2>&1 || git clone https://github.com/storytold/craft-i18n /tmp/craft-i18n
+          git clone https://github.com/storytold/craft-i18n "C:/temp/craft-i18n"
+          test -f arabization-en/04-Translation-Patch.tsv
+          test -s "C:/temp/craft-i18n/locales/ar/wordcraft.tsv"
+          test -s "C:/temp/craft-i18n/locales/ar/common.tsv"
           if [ -f arabization-en/04-Translation-Patch.tsv ]; then
             python << 'PYEOF'
           import pathlib
@@ -145,38 +148,56 @@ jobs:
               print(f"{fname}: {upd} updated")
           PYEOF
           fi
-          echo "CRAFT_I18N_DIR=C:/temp/craft-i18n" >> $GITHUB_ENV
+          echo "CRAFT_I18N_DIR=C:/temp/craft-i18n" >> "$GITHUB_ENV"
 
       - name: Install Rust 1.95
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: 1.95.0
 
-      - name: Install WiX Toolset
-        shell: powershell
+      - name: Install WiX 5.0.2 and matching extensions
+        shell: pwsh
         run: |
-          dotnet tool install --global wix --version 4.0.5
-          wix --version
-          wix extension add --global WixToolset.UI.wixext
-          wix extension add --global WixToolset.Util.wixext
-          wix extension list
-          echo "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+          $tools = Join-Path $env:RUNNER_TEMP 'wordcraft-wix'
+          dotnet tool install --tool-path $tools wix --version 5.0.2
+          if ($LASTEXITCODE -ne 0) { throw 'WiX installation failed.' }
+          $tools >> $env:GITHUB_PATH
+          $wix = Join-Path $tools 'wix.exe'
+          & $wix --version
+          if ($LASTEXITCODE -ne 0) { throw 'WiX version check failed.' }
+          foreach ($extension in @('UI', 'Util')) {
+            & $wix extension add -g "WixToolset.$extension.wixext/5.0.2"
+            if ($LASTEXITCODE -ne 0) { throw "WiX extension $extension installation failed." }
+          }
 
-      - name: Patch wxs for WiX 4.0.5 (fix WIX0005 Files)
-        shell: powershell
-        run: |
-          (Get-Content packaging/windows/wordcraft.wxs) -replace '<Files Include="\$\(var.AppNoticesDir\)\\\*\*" />', '<Component Id="AppNoticesFiles" Guid="11111111-1111-1111-1111-111111111111"><File Source="$(var.AppNoticesDir)\README.txt" KeyPath="yes" /></Component>' -replace '<Files Include="\$\(var.DocsDir\)\\\*\*" />', '<Component Id="DocsFiles" Guid="22222222-2222-2222-2222-222222222222"><File Source="$(var.DocsDir)\LICENSE.txt" KeyPath="yes" /></Component>' | Set-Content packaging/windows/wordcraft.wxs
-          Get-Content packaging/windows/wordcraft.wxs | Select-String -Pattern "Files|Component" | Write-Host
+      - name: Validate MSI packaging before compiling the app
+        shell: pwsh
+        run: ./packaging/windows/test-install-policy.ps1 -OutputDirectory (Join-Path $env:RUNNER_TEMP 'wordcraft-wix-check') -Architectures x64
 
       - name: Build Windows MSI + Portable
-        shell: powershell
+        shell: pwsh
         env:
           CRAFT_I18N_DIR: C:/temp/craft-i18n
+          CRAFT_I18N_REQUIRED: '1'
         run: |
-          $env:CRAFT_I18N_DIR="C:\temp\craft-i18n"
-          if (Test-Path "C:/temp/craft-i18n") { Write-Host "craft-i18n at C:/temp/craft-i18n ready"; dir "C:/temp/craft-i18n/locales/ar" | Out-String | Write-Host } else { Write-Host "WARNING craft-i18n missing"; dir C:/temp | Out-String | Write-Host }
-          powershell -ExecutionPolicy Bypass -File packaging/windows/package.ps1 -Arch x64
-          dir dist/release
+          $catalog = Join-Path $env:CRAFT_I18N_DIR 'locales/ar/wordcraft.tsv'
+          if (-not (Test-Path -LiteralPath $catalog -PathType Leaf)) { throw 'Arabic WordCraft catalog is missing.' }
+          ./packaging/windows/package.ps1 -Arch x64
+          $msi = @(Get-ChildItem -Path dist/release -Filter '*.msi' -File)
+          if ($msi.Count -ne 1 -or $msi[0].Length -lt 1MB) { throw 'Expected one nonempty WordCraft MSI in dist/release.' }
+          $msi | Format-Table Name, Length
+
+      - name: Verify Arabic translation is embedded
+        shell: bash
+        run: |
+          python <<'PYEOF'
+          from pathlib import Path
+          rows = Path('arabization-en/04-Translation-Patch.tsv').read_bytes().splitlines()
+          home = next(row.split(b'\t')[2] for row in rows if row.startswith(b'\tHome\t'))
+          assert home in Path('C:/temp/craft-i18n/locales/ar/common.tsv').read_bytes(), 'Arabic patch not applied'
+          assert home in Path('target/windows-package/x64/wordcraft.exe').read_bytes(), 'Arabic translation not embedded'
+          print('Verified: Arabic translation is embedded in wordcraft.exe')
+          PYEOF
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
