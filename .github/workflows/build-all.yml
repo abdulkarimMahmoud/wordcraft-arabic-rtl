@@ -22,7 +22,7 @@ jobs:
             python3 << 'PYEOF'
           import pathlib
           patch_path = pathlib.Path("arabization-en/04-Translation-Patch.tsv")
-          craft_root = pathlib.Path("/tmp/craft-i18n/locales/ar")
+          craft_root = pathlib.Path("C:/temp/craft-i18n/locales/ar") if pathlib.Path("C:/temp/craft-i18n").exists() else pathlib.Path("/tmp/craft-i18n/locales/ar")
           patch_entries=[]
           for line in patch_path.read_text(encoding="utf-8").splitlines():
               if not line.strip() or line.lstrip().startswith("#"): continue
@@ -109,12 +109,12 @@ jobs:
       - name: Clone craft-i18n + apply Arabic patch
         shell: bash
         run: |
-          git clone https://github.com/storytold/craft-i18n /tmp/craft-i18n
+          git clone https://github.com/storytold/craft-i18n "C:/temp/craft-i18n" 2>&1 || git clone https://github.com/storytold/craft-i18n /tmp/craft-i18n
           if [ -f arabization-en/04-Translation-Patch.tsv ]; then
             python << 'PYEOF'
           import pathlib
           patch_path = pathlib.Path("arabization-en/04-Translation-Patch.tsv")
-          craft_root = pathlib.Path("/tmp/craft-i18n/locales/ar")
+          craft_root = pathlib.Path("C:/temp/craft-i18n/locales/ar") if pathlib.Path("C:/temp/craft-i18n").exists() else pathlib.Path("/tmp/craft-i18n/locales/ar")
           patch_entries=[]
           for line in patch_path.read_text(encoding="utf-8").splitlines():
               if not line.strip() or line.lstrip().startswith("#"): continue
@@ -145,7 +145,7 @@ jobs:
               print(f"{fname}: {upd} updated")
           PYEOF
           fi
-          echo "CRAFT_I18N_DIR=/tmp/craft-i18n" >> $GITHUB_ENV
+          echo "CRAFT_I18N_DIR=C:/temp/craft-i18n" >> $GITHUB_ENV
 
       - name: Install Rust 1.95
         uses: dtolnay/rust-toolchain@master
@@ -157,15 +157,18 @@ jobs:
         run: |
           dotnet tool install --global wix --version 4.0.5
           wix --version
+          wix extension add --global WixToolset.UI.wixext
+          wix extension add --global WixToolset.Util.wixext
+          wix extension list
           echo "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Append
 
       - name: Build Windows MSI + Portable
         shell: powershell
         env:
-          CRAFT_I18N_DIR: /tmp/craft-i18n
+          CRAFT_I18N_DIR: C:/temp/craft-i18n
         run: |
           $env:CRAFT_I18N_DIR="C:\temp\craft-i18n"
-          if (Test-Path "/tmp/craft-i18n") { Copy-Item -Recurse -Force "/tmp/craft-i18n" "C:\temp\craft-i18n" }
+          if (Test-Path "C:/temp/craft-i18n") { Write-Host "craft-i18n at C:/temp/craft-i18n ready"; dir "C:/temp/craft-i18n/locales/ar" | Out-String | Write-Host } else { Write-Host "WARNING craft-i18n missing"; dir C:/temp | Out-String | Write-Host }
           powershell -ExecutionPolicy Bypass -File packaging/windows/package.ps1 -Arch x64
           dir dist/release
 
