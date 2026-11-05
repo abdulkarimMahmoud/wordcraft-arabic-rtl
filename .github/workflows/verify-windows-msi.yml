@@ -1,0 +1,86 @@
+name: Verify Windows MSI
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: Successful Build Windows Only run ID
+        required: true
+        type: string
+      expected_sha256:
+        description: Expected MSI SHA-256 (optional)
+        required: false
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  verify-installation:
+    name: Install and uninstall the built MSI
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download the MSI from the build
+        uses: actions/download-artifact@v4
+        with:
+          name: wordcraft-arabic-windows
+          path: installer
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.build_run_id }}
+
+      - name: Install and verify the application
+        shell: pwsh
+        env:
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $msis = @(Get-ChildItem -Path installer -Filter '*.msi' -File)
+          if ($msis.Count -ne 1) { throw 'Expected one MSI from the build.' }
+          $msi = $msis[0].FullName
+          $hash = (Get-FileHash -LiteralPath $msi -Algorithm SHA256).Hash
+          Write-Host "MSI SHA-256: $hash"
+          if ($env:EXPECTED_SHA256 -and $hash -ine $env:EXPECTED_SHA256) { throw 'MSI SHA-256 mismatch.' }
+          $log = Join-Path $env:RUNNER_TEMP 'wordcraft-msi-install.log'
+          $args = "/i `"$msi`" /qn /norestart /L*v `"$log`""
+          $process = Start-Process -FilePath msiexec.exe -ArgumentList $args -Wait -PassThru
+          if ($process.ExitCode -ne 0) {
+            if (Test-Path -LiteralPath $log) { Get-Content -LiteralPath $log -Tail 100 }
+            throw "MSI installation failed with exit code $($process.ExitCode)."
+          }
+          $install = Join-Path $env:LOCALAPPDATA 'Programs\ArtCraft\WordCraft'
+          $app = Join-Path $install 'wordcraft.exe'
+          $cli = Join-Path $install 'wordcraft-cli.exe'
+          if (-not (Test-Path -LiteralPath $app -PathType Leaf)) { throw "Installed app missing: $app" }
+          if (-not (Test-Path -LiteralPath $cli -PathType Leaf)) { throw "Installed CLI missing: $cli" }
+          & $cli --version
+          if ($LASTEXITCODE -ne 0) { throw 'Installed CLI failed to run.' }
+          Write-Host "MSI_INSTALL_OK $app"
+
+      - name: Uninstall and verify removal
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $msis = @(Get-ChildItem -Path installer -Filter '*.msi' -File)
+          if ($msis.Count -ne 1) { throw 'Expected one MSI from the build.' }
+          $msi = $msis[0].FullName
+          $log = Join-Path $env:RUNNER_TEMP 'wordcraft-msi-uninstall.log'
+          $args = "/x `"$msi`" /qn /norestart /L*v `"$log`""
+          $process = Start-Process -FilePath msiexec.exe -ArgumentList $args -Wait -PassThru
+          if ($process.ExitCode -ne 0) {
+            if (Test-Path -LiteralPath $log) { Get-Content -LiteralPath $log -Tail 100 }
+            throw "MSI uninstall failed with exit code $($process.ExitCode)."
+          }
+          $app = Join-Path $env:LOCALAPPDATA 'Programs\ArtCraft\WordCraft\wordcraft.exe'
+          if (Test-Path -LiteralPath $app) { throw "Program executable remains after uninstall: $app" }
+          Write-Host 'MSI_UNINSTALL_OK'
+
+      - name: Preserve installation logs on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-msi-test-logs
+          path: ${{ runner.temp }}/wordcraft-msi-*.log
+          if-no-files-found: ignore
+          retention-days: 2
