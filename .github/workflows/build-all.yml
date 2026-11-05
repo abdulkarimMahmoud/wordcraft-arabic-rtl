@@ -152,6 +152,13 @@ jobs:
         with:
           toolchain: 1.95.0
 
+      - name: Install WiX Toolset
+        shell: powershell
+        run: |
+          dotnet tool install --global wix --version 4.0.5
+          wix --version
+          echo "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+
       - name: Build Windows MSI + Portable
         shell: powershell
         env:
