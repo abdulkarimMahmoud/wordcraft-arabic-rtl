@@ -1,0 +1,80 @@
+name: Build Windows Only (Arabic)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Windows (MSI + Portable) — fast
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Clone craft-i18n + apply Arabic patch
+        shell: bash
+        run: |
+          git clone https://github.com/storytold/craft-i18n /tmp/craft-i18n
+          if [ -f arabization-en/04-Translation-Patch.tsv ]; then
+            python << 'PYEOF'
+          import pathlib
+          patch_path = pathlib.Path("arabization-en/04-Translation-Patch.tsv")
+          craft_root = pathlib.Path("/tmp/craft-i18n/locales/ar")
+          patch_entries=[]
+          for line in patch_path.read_text(encoding="utf-8").splitlines():
+              if not line.strip() or line.lstrip().startswith("#"): continue
+              parts=line.split("\t")
+              if len(parts)==3: ctx,eng,new=parts
+              elif len(parts)==2: ctx=""; eng,new=parts
+              else: continue
+              ctx=ctx.strip(); eng=eng.strip(); new=new.strip()
+              if eng and new: patch_entries.append((ctx,eng,new))
+          patch_dict={(ctx,eng):new for ctx,eng,new in patch_entries}
+          for fname in ["common.tsv","wordcraft.tsv","pdfcraft.tsv","cadcraft.tsv"]:
+              fpath=craft_root/fname
+              if not fpath.exists(): continue
+              lines=fpath.read_text(encoding="utf-8").splitlines()
+              out=[]; upd=0
+              for line in lines:
+                  if line.startswith("#") or not line.strip(): out.append(line); continue
+                  parts=line.split("\t")
+                  if len(parts)<3: out.append(line); continue
+                  if len(parts)>3: ctx=parts[0]; eng=parts[1]; trans="\t".join(parts[2:])
+                  else: ctx,eng,trans=parts
+                  key=(ctx,eng)
+                  if key in patch_dict:
+                      trans=patch_dict[key]; upd+=1
+                      out.append(f"{ctx}\t{eng}\t{trans}")
+                  else: out.append(line)
+              fpath.write_text("\n".join(out)+"\n", encoding="utf-8")
+              print(f"{fname}: {upd} updated")
+          PYEOF
+          fi
+          echo "CRAFT_I18N_DIR=/tmp/craft-i18n" >> $GITHUB_ENV
+      - name: Install Rust 1.95
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.95.0
+      - name: Install WiX Toolset
+        shell: powershell
+        run: |
+          dotnet tool install --global wix --version 4.0.5
+          wix --version
+          echo "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Append
+      - name: Build Windows MSI + Portable
+        shell: powershell
+        env:
+          CRAFT_I18N_DIR: /tmp/craft-i18n
+        run: |
+          $env:CRAFT_I18N_DIR="C:\temp\craft-i18n"
+          if (Test-Path "/tmp/craft-i18n") { Copy-Item -Recurse -Force "/tmp/craft-i18n" "C:\temp\craft-i18n" }
+          powershell -ExecutionPolicy Bypass -File packaging/windows/package.ps1 -Arch x64
+          dir dist/release
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-arabic-windows
+          path: |
+            dist/release/*.msi
+            dist/release/*.zip
+          if-no-files-found: error
