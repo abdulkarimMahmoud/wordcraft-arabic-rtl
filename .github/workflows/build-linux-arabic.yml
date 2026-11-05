@@ -1,0 +1,222 @@
+name: Build Arabic for Ubuntu and Debian
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-deb:
+    name: Build Arabic DEB (amd64, glibc 2.35)
+    runs-on: ubuntu-latest
+    container: ubuntu:22.04
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      CRAFT_I18N_DIR: /tmp/craft-i18n
+      CRAFT_I18N_REQUIRED: '1'
+    steps:
+      - name: Install Linux build prerequisites
+        run: |
+          apt-get -o Acquire::Retries=3 update
+          apt-get install -y --no-install-recommends \
+            ca-certificates curl git python3 build-essential cmake pkg-config \
+            libxkbcommon-dev libwayland-dev libx11-dev libxcursor-dev \
+            libxrandr-dev libxi-dev libgtk-3-dev libfontconfig1-dev libfreetype-dev
+
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check out the pinned language data and apply Arabic corrections
+        run: |
+          revision="$(tr -d '\r\n' < craft-i18n.rev)"
+          if [[ ! "$revision" =~ ^[[:xdigit:]]{40}$ ]]; then echo 'Invalid craft-i18n revision' >&2; exit 1; fi
+          git init "$CRAFT_I18N_DIR"
+          git -C "$CRAFT_I18N_DIR" remote add origin https://github.com/storytold/craft-i18n
+          git -C "$CRAFT_I18N_DIR" fetch --depth=1 origin "$revision"
+          git -C "$CRAFT_I18N_DIR" checkout --detach FETCH_HEAD
+          python3 arabization-en/apply_patch.py
+
+      - name: Install Rust 1.95
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.95.0
+
+      - name: Install pinned nFPM
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/nfpm.tar.gz" \
+            'https://github.com/goreleaser/nfpm/releases/download/v2.48.0/nfpm_2.48.0_Linux_x86_64.tar.gz'
+          echo "6d7f9a28b2f397934403950fcbba83f598b08d02edbe79a0815b3b4897341750  $RUNNER_TEMP/nfpm.tar.gz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/nfpm-bin"
+          tar -xzf "$RUNNER_TEMP/nfpm.tar.gz" -C "$RUNNER_TEMP/nfpm-bin" nfpm
+          echo "$RUNNER_TEMP/nfpm-bin" >> "$GITHUB_PATH"
+
+      - name: Build the DEB package
+        run: bash packaging/linux/package.sh --formats 'deb'
+
+      - name: Verify the package, Arabic catalog and glibc floor
+        run: |
+          shopt -s nullglob
+          packages=(dist/release/*.deb)
+          if [[ ${#packages[@]} -ne 1 ]]; then echo 'Expected one DEB package' >&2; exit 1; fi
+          deb="${packages[0]}"
+          [[ "$(dpkg-deb -f "$deb" Architecture)" == 'amd64' ]]
+          dpkg-deb -I "$deb"
+          stage="$(mktemp -d)"
+          trap 'rm -rf "$stage"' EXIT
+          dpkg-deb -x "$deb" "$stage"
+          python3 - "$stage/usr/bin/wordcraft" <<'PYEOF'
+          from pathlib import Path
+          import sys
+          rows = Path('arabization-en/04-Translation-Patch.tsv').read_bytes().splitlines()
+          home = next(row.split(b'\t')[2] for row in rows if row.startswith(b'\tHome\t'))
+          if home not in Path(sys.argv[1]).read_bytes():
+              raise SystemExit('Arabic translation is not embedded in the DEB application')
+          print('Verified: Arabic translation is embedded in the packaged application')
+          PYEOF
+          for executable in "$stage/usr/bin/wordcraft" "$stage/usr/bin/wordcraft-cli"; do
+            version="$(readelf -W --version-info "$executable" | sed -n 's/.*Name: GLIBC_\([0-9][0-9.]*\).*/\1/p' | sort -V | tail -n 1)"
+            if [[ -z "$version" ]] || [[ "$(printf '%s\n' 2.35 "$version" | sort -V | tail -n 1)" != '2.35' ]]; then
+              echo "glibc compatibility check failed for $executable: $version" >&2
+              exit 1
+            fi
+            echo "$executable: highest GLIBC requirement is $version"
+          done
+          sha256sum "$deb"
+
+      - name: Upload the DEB for tests and download
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-arabic-linux-deb
+          path: dist/release/*.deb
+          if-no-files-found: error
+
+  verify-install:
+    name: Install on ${{ matrix.distro }}
+    needs: build-deb
+    runs-on: ubuntu-latest
+    container: ${{ matrix.distro }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: ['ubuntu:22.04', 'ubuntu:24.04', 'ubuntu:26.04', 'debian:12', 'debian:13']
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - name: Prepare the clean distribution
+        run: |
+          apt-get -o Acquire::Retries=3 update
+          apt-get install -y --no-install-recommends ca-certificates
+      - uses: actions/download-artifact@v4
+        with:
+          name: wordcraft-arabic-linux-deb
+          path: package
+      - name: Install, execute, and remove the DEB
+        run: |
+          shopt -s nullglob
+          packages=(package/*.deb)
+          if [[ ${#packages[@]} -ne 1 ]]; then echo 'Expected one DEB package' >&2; exit 1; fi
+          deb="$(realpath "${packages[0]}")"
+          apt-get install -y --no-install-recommends "$deb"
+          dpkg-query -s wordcraft
+          wordcraft --version
+          wordcraft-cli --version
+          ldd /usr/bin/wordcraft | tee /tmp/wordcraft-ldd.txt
+          if grep -q 'not found' /tmp/wordcraft-ldd.txt; then exit 1; fi
+          dpkg -r wordcraft
+          if [[ -e /usr/bin/wordcraft ]]; then echo 'Executable remained after removal' >&2; exit 1; fi
+          echo 'DEB_INSTALL_AND_REMOVAL_OK'
+
+  verify-arabic-gui:
+    name: Test Arabic GUI and text input on Ubuntu
+    needs: build-deb
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - name: Install virtual display prerequisites
+        run: |
+          apt-get -o Acquire::Retries=3 update
+          apt-get install -y --no-install-recommends \
+            ca-certificates git python3 xvfb xauth libegl1 libgl1 libgl1-mesa-dri mesa-vulkan-drivers
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: wordcraft-arabic-linux-deb
+          path: package
+      - name: Install DEB and launch Arabic GUI
+        run: |
+          shopt -s nullglob
+          packages=(package/*.deb)
+          if [[ ${#packages[@]} -ne 1 ]]; then echo 'Expected one DEB package' >&2; exit 1; fi
+          deb="$(realpath "${packages[0]}")"
+          apt-get install -y --no-install-recommends "$deb"
+          mkdir -p validation
+          export WORDCRAFT_GUI_SCREENSHOT="$PWD/validation/wordcraft-arabic-gui.png"
+          xvfb-run -a -s '-screen 0 1440x900x24' python3 arabization-en/verify_linux_gui.py
+      - name: Save GUI test screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-arabic-linux-gui-check
+          path: validation/wordcraft-arabic-gui.png
+          if-no-files-found: error
+      - name: Save GUI log on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordcraft-arabic-linux-gui-log
+          path: ${{ runner.temp }}/wordcraft-gui-smoke.log
+          if-no-files-found: ignore
+          retention-days: 2
+
+  publish:
+    name: Publish direct DEB download on GitHub
+    needs: [build-deb, verify-install, verify-arabic-gui]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: wordcraft-arabic-linux-deb
+          path: package
+      - name: Publish a prerelease with the tested package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          packages=(package/*.deb)
+          if [[ ${#packages[@]} -ne 1 ]]; then echo 'Expected one DEB package' >&2; exit 1; fi
+          deb="${packages[0]}"
+          basename="$(basename "$deb")"
+          version="$(dpkg-deb -f "$deb" Version)"
+          (cd package && sha256sum "$basename" > "$basename.sha256")
+          tag="arabic-linux-${version}-run-${GITHUB_RUN_ID}"
+          printf -v notes '%s\n' \
+            'Community Arabic/RTL build for 64-bit Ubuntu and Debian; this is not an official upstream release.' \
+            'One DEB supports Ubuntu 22.04, 24.04, 26.04 and Debian 12 and 13 (amd64).' \
+            'The package was installed and removed in clean containers; the Arabic GUI and text input were smoke-tested.' \
+            'On systems not already using Arabic, choose Arabic under File > Options > Interface language.'
+          gh release create "$tag" "$deb" "package/$basename.sha256" \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "WordCraft Arabic $version for Ubuntu and Debian (amd64)" \
+            --notes "$notes" --prerelease
+          echo "Published release: https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag"
