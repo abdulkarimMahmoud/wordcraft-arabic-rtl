@@ -8,7 +8,7 @@ jobs:
     name: Windows (MSI + Portable) — fast
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Clone craft-i18n + apply Arabic patch
@@ -102,7 +102,7 @@ jobs:
           PYEOF
 
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wordcraft-arabic-windows
           path: dist/release/*.msi
@@ -110,7 +110,7 @@ jobs:
 
       - name: Preserve compiled binaries if packaging fails
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wordcraft-windows-binaries-for-retry
           path: |
